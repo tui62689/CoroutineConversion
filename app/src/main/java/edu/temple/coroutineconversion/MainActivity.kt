@@ -4,10 +4,13 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import java.util.Locale
+import kotlinx.coroutines.*
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -32,13 +35,23 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+
+        val scope = CoroutineScope(Job() + Dispatchers.Default)
+
+
         findViewById<Button>(R.id.revealButton).setOnClickListener{
-            Thread{
+
+            scope.launch {
                 repeat(100) {
-                    handler.sendEmptyMessage(it)
-                    Thread.sleep(40)
+                    Log.d("Countdown", (100 - it).toString())
+
+                    currentTextView.text = String.format(Locale.getDefault(), "Current opacity: %d", it)
+                    cakeImageView.alpha = it / 100f
+
+                    delay(40)
+
                 }
-            }.start()
+            }
         }
     }
 }
